@@ -10,6 +10,16 @@ public class Game {
         this.input = input;
     }
 
+    public static boolean isGridValid(String grid) {
+        int count = 0;
+        for (int i = 0; i < grid.length(); i++) {
+            if (grid.charAt(i) == '_') {
+                count++;
+            }
+        }
+        return count == 9;
+    }
+
     public void showGrid() {
         System.out.println("---------");
         for (int i = 0; i < input.length(); i++) {
@@ -26,34 +36,16 @@ public class Game {
     }
 
     public void showResult() {
-        if (isMoreSymbols() || isTwoWinners()) {
-            System.out.println("Impossible");
-        } else if (isWinner(X)) {
+        if (isWinner(X)) {
             System.out.println("X wins");
         } else if (isWinner(O)) {
             System.out.println("O wins");
-        } else if (isNotFinished()) {
-            System.out.println("Game not finished");
         } else {
             System.out.println("Draw");
         }
     }
 
-    private boolean isMoreSymbols() {
-        int countX = 0;
-        int countO = 0;
-        for (int i = 0; i < input.length(); i++) {
-            if (input.charAt(i) == X) {
-                countX++;
-            }
-            if (input.charAt(i) == O) {
-                countO++;
-            }
-        }
-        return Math.abs(countX - countO) >= IMPOSSIBLE_DIFFERENCE;
-    }
-
-    private boolean isWinner(char symbol) {
+    public boolean isWinner(char symbol) {
         int[][] winIndexes = {{0, 1, 2}, {3, 4, 5},
                 {6, 7, 8}, {0, 3, 6},
                 {1, 4, 7}, {2, 5, 8},
@@ -71,11 +63,7 @@ public class Game {
         return false;
     }
 
-    private boolean isTwoWinners() {
-        return isWinner(X) && isWinner(O);
-    }
-
-    private boolean isNotFinished() {
+    public boolean isNotFinished() {
         int count_ = 0;
         for (int i = 0; i < input.length(); i++) {
             if (input.charAt(i) != X && input.charAt(i) != O) {

@@ -4,14 +4,31 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter cells: ");
-        String input = scanner.nextLine();
-
-        Game game = new Game(input);
+        Game game = new Game("_________");
         game.showGrid();
 
+        while (!game.isWinner('X') && !game.isWinner('O') && game.isNotFinished()) {
+            inputAndCheckCoordinates(scanner, game, 'X');
+            if (game.isWinner('X')) {
+                game.showResult();
+                break;
+            } else if (!game.isNotFinished()) {
+                game.showResult();
+                break;
+            }
+            inputAndCheckCoordinates(scanner, game, 'O');
+            if (game.isWinner('O')) {
+                game.showResult();
+                break;
+            } else if (!game.isNotFinished()) {
+                game.showResult();
+                break;
+            }
+        }
+    }
+
+    public static void inputAndCheckCoordinates(Scanner scanner, Game game, char symbol) {
         boolean isNotDigit = true;
         boolean isNotInRange = true;
         boolean isNotCellEmpty = true;
@@ -36,7 +53,6 @@ public class Main {
             } else {
                 isNotInRange = false;
             }
-
             if (!game.isEmpty(coordinate)) {
                 System.out.println("This cell is occupied! Choose another!");
                 isNotCellEmpty = true;
@@ -44,8 +60,7 @@ public class Main {
                 isNotCellEmpty = false;
             }
         }
-
-        game.putAnswer('X', coordinate);
+        game.putAnswer(symbol, coordinate);
         game.showGrid();
     }
 }
