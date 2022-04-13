@@ -6,61 +6,37 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Game game = new Game("_________");
-        game.showGrid();
+        System.out.println(game.showGrid());
 
-        while (!game.isWinner('X') && !game.isWinner('O') && game.isNotFinished()) {
-            inputAndCheckCoordinates(scanner, game, 'X');
+        while (!game.isFinished()) {
+            playStep(scanner, game, 'X');
             if (game.isWinner('X')) {
-                game.showResult();
-                break;
-            } else if (!game.isNotFinished()) {
-                game.showResult();
                 break;
             }
-            inputAndCheckCoordinates(scanner, game, 'O');
-            if (game.isWinner('O')) {
-                game.showResult();
+            if (game.isFinished()) {
                 break;
-            } else if (!game.isNotFinished()) {
-                game.showResult();
+            }
+            playStep(scanner, game, 'O');
+            if (game.isWinner('O')) {
                 break;
             }
         }
+        System.out.println(game.showResult());
     }
 
-    public static void inputAndCheckCoordinates(Scanner scanner, Game game, char symbol) {
-        boolean isNotDigit = true;
-        boolean isNotInRange = true;
-        boolean isNotCellEmpty = true;
+    private static void playStep(Scanner scanner, Game game, char symbol) {
         Coordinate coordinate = null;
-        while (isNotDigit || isNotInRange || isNotCellEmpty) {
+        String strAnswer;
+        do {
             System.out.println("Enter the coordinates: ");
-            String strAnswer = scanner.nextLine();
-
-            if (!Coordinate.isDigit(strAnswer)) {
-                System.out.println("You should enter numbers!");
-                isNotDigit = true;
-                continue;
-            } else {
-                isNotDigit = false;
+            strAnswer = scanner.nextLine();
+            try {
+                coordinate = Coordinate.parse(strAnswer, game);
+            } catch (InvalidNumberException e) {
+                System.out.println(e.getMessage());
             }
-            coordinate = Coordinate.parse(strAnswer);
-
-            if (!coordinate.isInRange()) {
-                System.out.println("Coordinates should be from 1 to 3");
-                isNotInRange = true;
-                continue;
-            } else {
-                isNotInRange = false;
-            }
-            if (!game.isEmpty(coordinate)) {
-                System.out.println("This cell is occupied! Choose another!");
-                isNotCellEmpty = true;
-            } else {
-                isNotCellEmpty = false;
-            }
-        }
+        } while (coordinate == null);
         game.putAnswer(symbol, coordinate);
-        game.showGrid();
+        System.out.println(game.showGrid());
     }
 }
