@@ -5,9 +5,9 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Game game = new Game("_________");
+        char[] field = new char[]{'_', '_', '_', '_', '_', '_', '_', '_', '_'};
+        Game game = new Game(field);
         System.out.println(game.getGrid());
-
         while (!game.isFinished()) {
             playStep(scanner, game, Game.X);
             if (game.isWinner(Game.X)) {
@@ -25,17 +25,19 @@ public class Main {
     }
 
     private static void playStep(Scanner scanner, Game game, char symbol) {
-        Coordinate coordinate = null;
-        do {
+        Coordinate coordinate;
+        boolean answerSet = false;
+        while (!answerSet) {
             System.out.println("Enter the coordinates: ");
-            String strAnswer = scanner.nextLine();
+            String userAnswer = scanner.nextLine();
             try {
-                coordinate = Game.parse(strAnswer, game);
+                coordinate = Coordinate.parse(userAnswer);
+                game.putAnswer(symbol, coordinate);
+                System.out.println(game.getGrid());
+                answerSet = true;
             } catch (InvalidNumberException e) {
                 System.out.println(e.getMessage());
             }
-        } while (coordinate == null);
-        game.putAnswer(symbol, coordinate);
-        System.out.println(game.getGrid());
+        }
     }
 }
