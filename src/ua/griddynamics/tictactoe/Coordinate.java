@@ -19,16 +19,16 @@ public class Coordinate {
 
     public static Coordinate parse(String userAnswer) throws InvalidNumberException {
         String[] coordinates = userAnswer.split(" ");
-        if (!isCoordinateDigit(coordinates)) {
-            throw new InvalidNumberException("You should enter numbers!");
-        } else {
+        if (coordinates.length == 2 && isDigit(coordinates[0]) && isDigit(coordinates[1])) {
             int x = Integer.parseInt(coordinates[0]);
             int y = Integer.parseInt(coordinates[1]);
             return new Coordinate(x, y);
+        } else {
+            throw new InvalidNumberException("You should enter numbers!");
         }
     }
 
-    public static boolean isCoordinateDigit(String[] coordinates) {
-        return coordinates.length == 2 && coordinates[0].matches("\\d+") && coordinates[1].matches("\\d+");
+    public static boolean isDigit(String value) {
+        return value.matches("\\d+");
     }
 }

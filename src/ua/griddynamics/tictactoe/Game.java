@@ -20,11 +20,11 @@ public class Game {
         sb.append("---------");
         sb.append(System.lineSeparator());
         for (int i = 0; i < field.length; i++) {
-            if (i % 3 == 0) {
+            if (i % SIZE_OF_GRID == 0) {
                 sb.append("| ");
             }
             sb.append(field[i]).append(" ");
-            if (i % 3 == 2) {
+            if (i % SIZE_OF_GRID + 1 == SIZE_OF_GRID) {
                 sb.append("|");
                 sb.append(System.lineSeparator());
             }
@@ -35,7 +35,7 @@ public class Game {
 
     public void putAnswer(char symbol, Coordinate coordinate) throws InvalidNumberException {
         if (!isCoordinateInRange(coordinate)) {
-            throw new InvalidNumberException("Coordinates should be from 1 to 3");
+            throw new InvalidNumberException("Coordinates should be from 1 to " + SIZE_OF_GRID);
         } else if (!isCellEmpty(coordinate)) {
             throw new InvalidNumberException("This cell is occupied! Choose another!");
         }
@@ -60,10 +60,10 @@ public class Game {
     }
 
     public boolean isWinner(char symbol) {
-        int countOfSymbols = 0;
-        for (int i = 0; i < WIN_INDEXES.length; i++) {
-            for (int j = 0; j < WIN_INDEXES[i].length; j++) {
-                if (field[(WIN_INDEXES[i][j])] == symbol) {
+        for (int[] winIndex : WIN_INDEXES) {
+            int countOfSymbols = 0;
+            for (int index : winIndex) {
+                if (field[index] == symbol) {
                     countOfSymbols++;
                 }
             }
@@ -78,8 +78,8 @@ public class Game {
 
     public boolean isFinished() {
         int count = 0;
-        for (int i = 0; i < field.length; i++) {
-            if (field[i] == EMPTY) {
+        for (char c : field) {
+            if (c == EMPTY) {
                 count++;
             }
         }

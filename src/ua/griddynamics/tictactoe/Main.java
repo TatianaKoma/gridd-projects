@@ -25,13 +25,12 @@ public class Main {
     }
 
     private static void playStep(Scanner scanner, Game game, char symbol) {
-        Coordinate coordinate;
         boolean answerSet = false;
         while (!answerSet) {
             System.out.println("Enter the coordinates: ");
             String userAnswer = scanner.nextLine();
             try {
-                coordinate = Coordinate.parse(userAnswer);
+                Coordinate coordinate = Coordinate.parse(userAnswer);
                 game.putAnswer(symbol, coordinate);
                 System.out.println(game.getGrid());
                 answerSet = true;
