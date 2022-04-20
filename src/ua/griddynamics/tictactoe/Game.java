@@ -53,7 +53,6 @@ public class Game {
         return (0 <= x && x <= SIZE_OF_GRID) && (0 <= y && y <= SIZE_OF_GRID);
     }
 
-
     public boolean isCellEmpty(Coordinate coordinate) {
         int position = getPosition(coordinate);
         return field[position] == EMPTY;
@@ -69,8 +68,6 @@ public class Game {
             }
             if (countOfSymbols == SIZE_OF_GRID) {
                 return true;
-            } else {
-                countOfSymbols = 0;
             }
         }
         return false;
