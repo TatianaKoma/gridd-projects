@@ -1,8 +1,8 @@
 package ua.griddynamics.tictactoe;
 
 public class Coordinate {
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
 
     public Coordinate(int x, int y) {
         this.x = x;
@@ -17,19 +17,18 @@ public class Coordinate {
         return y;
     }
 
-    public static boolean isDigit(String input) {
-        String[] coordinates = input.split(" ");
-        return coordinates[0].matches("\\d+") && coordinates[1].matches("\\d+");
+    public static Coordinate parse(String userAnswer) throws InvalidNumberException {
+        String[] coordinates = userAnswer.split(" ");
+        if (coordinates.length == 2 && isDigit(coordinates[0]) && isDigit(coordinates[1])) {
+            int x = Integer.parseInt(coordinates[0]);
+            int y = Integer.parseInt(coordinates[1]);
+            return new Coordinate(x, y);
+        } else {
+            throw new InvalidNumberException("You should enter numbers!");
+        }
     }
 
-    public static Coordinate parse(String input) {
-        String[] coordinates = input.split(" ");
-        return new Coordinate(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
-    }
-
-    public boolean isInRange() {
-        int x = getX();
-        int y = getY();
-        return (1 <= x && x <= 3) && (1 <= y && y <= 3);
+    public static boolean isDigit(String value) {
+        return value.matches("\\d+");
     }
 }

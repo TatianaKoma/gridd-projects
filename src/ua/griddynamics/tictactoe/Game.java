@@ -1,115 +1,95 @@
 package ua.griddynamics.tictactoe;
 
 public class Game {
-    private static final int IMPOSSIBLE_DIFFERENCE = 2;
-    private final char X = 'X';
-    private final char O = 'O';
-    private String input;
+    public static final char X = 'X';
+    public static final char O = 'O';
+    public static final char EMPTY = '_';
+    private static final int SIZE_OF_GRID = 3;
+    private static final int[][] WIN_INDEXES = {{0, 1, 2}, {3, 4, 5},
+            {6, 7, 8}, {0, 3, 6},
+            {1, 4, 7}, {2, 5, 8},
+            {0, 4, 8}, {2, 4, 6}};
+    private final char[] field;
 
-    public Game(String input) {
-        this.input = input;
+    public Game(char[] field) {
+        this.field = field;
     }
 
-    public void showGrid() {
-        System.out.println("---------");
-        for (int i = 0; i < input.length(); i++) {
-            if (i % 3 == 0) {
-                System.out.print("| ");
+    public String getGrid() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("---------");
+        sb.append(System.lineSeparator());
+        for (int i = 0; i < field.length; i++) {
+            if (i % SIZE_OF_GRID == 0) {
+                sb.append("| ");
             }
-            System.out.print(input.charAt(i) + " ");
-            if (i % 3 == 2) {
-                System.out.print("|");
-                System.out.println();
-            }
-        }
-        System.out.println("---------");
-    }
-
-    public void showResult() {
-        if (isMoreSymbols() || isTwoWinners()) {
-            System.out.println("Impossible");
-        } else if (isWinner(X)) {
-            System.out.println("X wins");
-        } else if (isWinner(O)) {
-            System.out.println("O wins");
-        } else if (isNotFinished()) {
-            System.out.println("Game not finished");
-        } else {
-            System.out.println("Draw");
-        }
-    }
-
-    private boolean isMoreSymbols() {
-        int countX = 0;
-        int countO = 0;
-        for (int i = 0; i < input.length(); i++) {
-            if (input.charAt(i) == X) {
-                countX++;
-            }
-            if (input.charAt(i) == O) {
-                countO++;
+            sb.append(field[i]).append(" ");
+            if (i % SIZE_OF_GRID + 1 == SIZE_OF_GRID) {
+                sb.append("|");
+                sb.append(System.lineSeparator());
             }
         }
-        return Math.abs(countX - countO) >= IMPOSSIBLE_DIFFERENCE;
+        sb.append("---------");
+        return sb.toString();
     }
 
-    private boolean isWinner(char symbol) {
-        int[][] winIndexes = {{0, 1, 2}, {3, 4, 5},
-                {6, 7, 8}, {0, 3, 6},
-                {1, 4, 7}, {2, 5, 8},
-                {0, 4, 8}, {2, 4, 6}};
+    public void putAnswer(char symbol, Coordinate coordinate) throws InvalidNumberException {
+        if (!isCoordinateInRange(coordinate)) {
+            throw new InvalidNumberException("Coordinates should be from 1 to " + SIZE_OF_GRID);
+        } else if (!isCellEmpty(coordinate)) {
+            throw new InvalidNumberException("This cell is occupied! Choose another!");
+        }
+        int position = getPosition(coordinate);
+        field[position] = symbol;
+    }
 
-        for (int i = 0; i < winIndexes.length; i++) {
-            boolean firstWinIndex = input.charAt(winIndexes[i][0]) == symbol;
-            boolean secondWinIndex = input.charAt(winIndexes[i][1]) == symbol;
-            boolean thirdWinIndex = input.charAt(winIndexes[i][2]) == symbol;
+    private int getPosition(Coordinate coordinate) {
+        return (coordinate.getX() - 1) * SIZE_OF_GRID + (coordinate.getY() - 1);
+    }
 
-            if (firstWinIndex && secondWinIndex && thirdWinIndex) {
+    public boolean isCoordinateInRange(Coordinate coordinate) {
+        int x = coordinate.getX();
+        int y = coordinate.getY();
+        return (0 <= x && x <= SIZE_OF_GRID) && (0 <= y && y <= SIZE_OF_GRID);
+    }
+
+    public boolean isCellEmpty(Coordinate coordinate) {
+        int position = getPosition(coordinate);
+        return field[position] == EMPTY;
+    }
+
+    public boolean isWinner(char symbol) {
+        for (int[] winIndex : WIN_INDEXES) {
+            int countOfSymbols = 0;
+            for (int index : winIndex) {
+                if (field[index] == symbol) {
+                    countOfSymbols++;
+                }
+            }
+            if (countOfSymbols == SIZE_OF_GRID) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean isTwoWinners() {
-        return isWinner(X) && isWinner(O);
-    }
-
-    private boolean isNotFinished() {
-        int count_ = 0;
-        for (int i = 0; i < input.length(); i++) {
-            if (input.charAt(i) != X && input.charAt(i) != O) {
-                count_++;
+    public boolean isFinished() {
+        int count = 0;
+        for (char c : field) {
+            if (c == EMPTY) {
+                count++;
             }
         }
-        return count_ > 0;
+        return count == 0;
     }
 
-    public void putAnswer(char symbol, Coordinate coordinate) {
-        int position = getPosition(coordinate);
-        StringBuilder sb = new StringBuilder(input);
-        sb.replace(position, position + 1, String.valueOf(symbol));
-        input = sb.toString();
-    }
-
-    private int getPosition(Coordinate coordinate) {
-        int position = 0;
-        switch (coordinate.getX()) {
-            case 1:
-                position = -1;
-                break;
-            case 2:
-                position = 2;
-                break;
-            case 3:
-                position = 5;
-                break;
+    public String getResult() {
+        if (isWinner(X)) {
+            return "X wins";
+        } else if (isWinner(O)) {
+            return "O wins";
+        } else {
+            return "Draw";
         }
-        return position + coordinate.getY();
-    }
-
-    public boolean isEmpty(Coordinate coordinate) {
-        int position = getPosition(coordinate);
-        return input.charAt(position) == '_';
     }
 }
